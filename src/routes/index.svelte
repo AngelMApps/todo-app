@@ -1,28 +1,85 @@
 <script>
+	import { showForm } from '../stores';
 	import Navbar from '../components/Navbar.svelte';
-	let showForm = false;
+	import { notifications } from '../components/notifications.js';
+	import Toast from '../components/Toast.svelte';
 	let doTodo = '';
-	let listTodo = [];
+	let listTodo = [{ Do: 'Prueba', status: false }];
 
 	function addToList() {
 		if (doTodo != '') {
-			listTodo = [...listTodo, { do: doTodo, status: false }];
+			listTodo = [...listTodo, { Do: doTodo, status: false }];
 			doTodo = '';
-			showForm = !showForm;
-			console.log(listTodo);
+		} else {
+			notifications.danger('Tarea Vacia', 1700);
 		}
 	}
+	function removeFromList(index) {
+		listTodo[index].status = true;
+
+		setTimeout(function () {
+			listTodo.splice(index, 1);
+			listTodo = listTodo;
+		}, 500);
+	}
+	const onKeyPress = (e) => {
+		if (e.charCode === 13) addToList();
+	};
 </script>
 
 <main>
 	<Navbar />
-	<div class={showForm == true ? 'div-form show_Form' : 'div-form hide_Form'}>
-		<textarea bind:value={doTodo} rows="20" type="text" placeholder="Nueva Tarea" multiple />
-		<input type="button" on:click={addToList} value="agregar" />
+
+	<div class="div-form">
+		<input
+			class="input-todo"
+			bind:value={doTodo}
+			on:keypress={onKeyPress}
+			type="text"
+			placeholder="Nueva Tarea"
+			style="border: solid 1.5px rgb(124, 192, 152); 
+				   margin: 0px;border-radius: 15px;
+				   padding: 10px;width: 100%;
+				   height: 100%;color: #fff;"
+		/>
+		<button
+			on:click={() => addToList()}
+			class="btn-floating btn-large waves-effect waves-light"
+			type="submit"
+			name="action"
+		>
+			<i class="fas fa-paper-plane" />
+		</button>
 	</div>
-	<div class="addButton" on:click={() => (showForm = !showForm)}>
-		<i class="fas fa-plus" />
+
+	<div class="Todos-div row">
+		{#each listTodo as lT, index}
+			<div
+				class={lT.status == false
+					? 'col s12 m6 l3 animate__animated animate__zoomInUp animate__slows'
+					: 'col s12 m6 l3 animate__animated animate__zoomOut animate__slower'}
+			>
+				<div class="card horizontal">
+					<div class="card-stacked">
+						<div class="card-content">
+							<p class="content-p">{lT.Do}</p>
+						</div>
+						<div class="card-action center-align">
+							<p>
+								<i
+									class={lT.status == false ? 'far fa-square' : 'far fa-check-square'}
+									on:click={() => removeFromList(index)}
+								/>
+								<span>Hecho</span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		{/each}
 	</div>
+
+	<Toast />
 </main>
 
 <style>
@@ -30,68 +87,49 @@
 		width: 100%;
 		height: 100%;
 	}
-	.addButton {
-		background-color: rgb(122, 158, 150);
-		color: rgb(255, 255, 255);
-		padding: 0px;
-		margin: 0px 5px 5px 0px;
-		position: absolute;
-		right: 0;
-		z-index: 1;
-		bottom: 0;
-		width: 45px;
-		height: 45px;
-		border-radius: 25px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		transition: background-color 1s ease-in-out, color 1s ease-in-out;
-		cursor: pointer;
+
+	.content-p {
+		word-break: break-all;
 	}
-	i {
+	.fa-paper-plane {
 		padding: 0px;
-		font-size: 25px;
+		margin: 0px;
+		font-size: 20px;
 	}
-	.addButton:hover {
-		background-color: rgb(220, 245, 239);
-		color: rgb(77, 100, 95);
+	.fa-check-square,
+	.fa-square {
+		font-size: 30px;
+		color: rgb(112, 214, 172);
 	}
 	.div-form {
-		background-color: rgba(77, 99, 94, 0.199);
-		width: 50%;
+		margin-top: 80px;
 		padding: 10px;
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		align-items: center;
-		justify-content: space-evenly;
+		justify-content: center;
 		transition: top 1s;
 		z-index: 1;
 		height: 60%;
 	}
-	.show_Form {
-		position: absolute;
-		top: 100px;
-		left: 0;
-		right: 0;
-		margin: auto;
+	.input-todo {
+		border-radius: 35px;
+		padding: 40px;
+		margin: 0px;
+		width: 100%;
+		height: 100%;
+		color: #fff;
 	}
-	.hide_Form {
-		position: absolute;
-		top: -400px;
-		left: 0;
-		right: 0;
-		margin: auto;
+	.btn-floating {
+		margin-left: 10px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: rgb(124, 192, 152);
+		width: 50px;
+		height: 45px;
 	}
-	textarea {
-		resize: none;
-		border-radius: 15px;
-		outline: none;
-		padding: 10px;
-		width: 90%;
-		border: 0;
-		background-color: rgb(171, 187, 177);
-	}
-	button {
-		border-radius: 20px;
+	.Todos-div {
+		margin-top: 10px;
 	}
 </style>
