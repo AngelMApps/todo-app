@@ -1,3 +1,3 @@
 # Todo App
 
-Aplicacion para listar tareas para realizar de manera sencilla usando Svelte.
+Aplicacion para listar tareas de manera sencilla usando Svelte.
