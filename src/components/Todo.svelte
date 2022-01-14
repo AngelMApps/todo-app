@@ -78,7 +78,7 @@
 				<div class="card horizontal">
 					<div class="card-stacked">
 						<div class="card-content">
-							<p class="content-p">{todo.text} - {todo.id}</p>
+							<p class="content-p">{todo.text}</p>
 						</div>
 						<div class="card-action center-align">
 							<p>
@@ -118,7 +118,7 @@
 		color: rgb(112, 214, 172);
 	}
 	.div-form {
-		margin-top: 80px;
+		margin-top: 58px;
 		padding: 10px;
 		display: flex;
 		flex-direction: row;
