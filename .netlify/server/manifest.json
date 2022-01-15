@@ -37,14 +37,6 @@
       "assets/entries/pages/index.svelte-b95e2330.css"
     ]
   },
-  "src/routes/profile/index.svelte": {
-    "file": "entries/pages/profile/index.svelte.js",
-    "src": "src/routes/profile/index.svelte",
-    "isEntry": true,
-    "imports": [
-      "_index-c8dcedc4.js"
-    ]
-  },
   "_index-c8dcedc4.js": {
     "file": "chunks/index-c8dcedc4.js"
   }
