@@ -4,11 +4,12 @@
 	import { user } from '../user';
 	import { auth, googleProvider } from '../firebase';
 	import { onMount } from 'svelte';
+	import LoaderPage from '../components/loaderPage.svelte';
 
 	onMount(async () => {
 		await user.current();
 	});
-	
+
 	const loginWithGoogle = async () => {
 		try {
 			const res = await auth.signInWithPopup(googleProvider);
@@ -22,7 +23,7 @@
 <main>
 	<section>
 		{#if $user === false}
-			<h1>...cargando</h1>
+			<LoaderPage />
 		{:else if $user === null}
 			<Navbar />
 			<div>
