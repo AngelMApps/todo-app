@@ -1,30 +1,39 @@
 <script>
 	import Navbar from '../components/Navbar.svelte';
 	import Todos from '../components/Todo.svelte';
+	import { user } from '../user';
 	import { auth, googleProvider } from '../firebase';
-	import { authState } from 'rxfire/auth';
+	import { onMount } from 'svelte';
 
-	let user;
-
-	const unsubscribe = authState(auth).subscribe((u) => (user = u));
-
-	function login() {
-		auth.signInWithPopup(googleProvider);
-	}
+	onMount(async () => {
+		await user.current();
+	});
+	
+	const loginWithGoogle = async () => {
+		try {
+			const res = await auth.signInWithPopup(googleProvider);
+			user.setUser(res.user);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 </script>
 
 <main>
 	<section>
-		{#if user}
-			<Navbar iUser={user} />
-			<Todos uid={user.uid} />
-		{:else}
+		{#if $user === false}
+			<h1>...cargando</h1>
+		{:else if $user === null}
 			<Navbar />
 			<div>
-				<button on:click={login} class="center-align">
+				<button on:click={loginWithGoogle} class="center-align">
 					<i class="fab fa-google" /> Signin with Google
 				</button>
 			</div>
+		{:else}
+			<!-- else content here -->
+			<Navbar iUser={$user} />
+			<Todos uid={$user.uid} />
 		{/if}
 	</section>
 </main>

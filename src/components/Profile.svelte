@@ -1,15 +1,26 @@
 <script>
 	import { auth, googleProvider } from '../firebase';
+	import { user } from '../user';
 	export let displayName;
 	export let photoURL;
 	export let uid;
+	const logoutWithGoogle = async() =>{
+		try {
+			await auth.signOut();
+			user.setUser(null);
+			//navigate('/login',{replace:true});
+		} catch (error) {
+			console.error(error);
+		}
+		
+	}
 </script>
 
 <section>
 	<h3>Hola {displayName}!</h3>
 	<img src={photoURL} width="100" alt="user avatar" />
 	<p>Tu userID es {uid}</p>
-	<button on:click={() => auth.signOut()}>
+	<button on:click={() => logoutWithGoogle()}>
 		Logout <i class="fas fa-sign-out-alt"></i>
 	</button>
 </section>

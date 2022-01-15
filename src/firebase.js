@@ -15,5 +15,12 @@ firebase.initializeApp(firebaseConfig);
 
 export const auth = firebase.auth();
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
-
+firebase.getCurrentUser = () => {
+    return new Promise((resolve,reject) =>{
+        firebase.auth().onAuthStateChanged(user =>{
+            resolve(user);
+        },reject);
+    });
+}
 export const db = firebase.firestore();
+export {firebase};
