@@ -12,7 +12,7 @@
 
 	const loginWithGoogle = async () => {
 		try {
-			const res = await auth.signInWithRedirect(googleProvider);
+			const res = await auth.signInWithPopup(googleProvider);
 			user.setUser(res.user);
 		} catch (error) {
 			console.error(error);
