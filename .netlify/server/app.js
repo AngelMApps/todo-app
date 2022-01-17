@@ -1,48 +1,3 @@
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __defProps = Object.defineProperties;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
-var __export = (target, all) => {
-  __markAsModule(target);
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __reExport = (target, module2, desc) => {
-  if (module2 && typeof module2 === "object" || typeof module2 === "function") {
-    for (let key of __getOwnPropNames(module2))
-      if (!__hasOwnProp.call(target, key) && key !== "default")
-        __defProp(target, key, { get: () => module2[key], enumerable: !(desc = __getOwnPropDesc(module2, key)) || desc.enumerable });
-  }
-  return target;
-};
-var __toModule = (module2) => {
-  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
-};
-__export(exports, {
-  App: () => App,
-  override: () => override
-});
-var import_index_c8dcedc4 = __toModule(require("./chunks/index-c8dcedc4.js"));
 var __accessCheck = (obj, member, msg) => {
   if (!member.has(obj))
     throw TypeError("Cannot " + msg);
@@ -62,6 +17,7 @@ var __privateSet = (obj, member, value, setter) => {
   return value;
 };
 var _map;
+import { c as create_ssr_component, s as setContext, v as validate_component, m as missing_component } from "./chunks/index-c8dcedc4.js";
 function get_single_valued_header(headers, key) {
   const value = headers[key];
   if (Array.isArray(value)) {
@@ -133,7 +89,7 @@ async function render_endpoint(request, route, match) {
   }
   let normalized_body;
   if ((typeof body === "object" || typeof body === "undefined") && !(body instanceof Uint8Array) && (!type || type.startsWith("application/json"))) {
-    headers = __spreadProps(__spreadValues({}, headers), { "content-type": "application/json; charset=utf-8" });
+    headers = { ...headers, "content-type": "application/json; charset=utf-8" };
     normalized_body = JSON.stringify(typeof body === "undefined" ? {} : body);
   } else {
     normalized_body = body;
@@ -643,7 +599,7 @@ function serialize_error(error2) {
   let serialized = try_serialize(error2);
   if (!serialized) {
     const { name, message, stack } = error2;
-    serialized = try_serialize(__spreadProps(__spreadValues({}, error2), { name, message, stack }));
+    serialized = try_serialize({ ...error2, name, message, stack });
   }
   if (!serialized) {
     serialized = "{}";
@@ -736,7 +692,7 @@ async function load_node({
   status,
   error: error2
 }) {
-  const { module: module2 } = node;
+  const { module } = node;
   let uses_credentials = false;
   const fetched = [];
   let set_cookie_headers = [];
@@ -749,7 +705,7 @@ async function load_node({
       return Reflect.get(target, prop, receiver);
     }
   });
-  if (module2.load) {
+  if (module.load) {
     const load_input = {
       url: url_proxy,
       params,
@@ -763,7 +719,7 @@ async function load_node({
           requested = resource;
         } else {
           requested = resource.url;
-          opts = __spreadValues({
+          opts = {
             method: resource.method,
             headers: resource.headers,
             body: resource.body,
@@ -772,8 +728,9 @@ async function load_node({
             cache: resource.cache,
             redirect: resource.redirect,
             referrer: resource.referrer,
-            integrity: resource.integrity
-          }, opts);
+            integrity: resource.integrity,
+            ...opts
+          };
         }
         opts.headers = new Headers(opts.headers);
         const resolved = resolve(request.url.pathname, requested.split("?")[0]);
@@ -880,7 +837,7 @@ async function load_node({
           status: 404
         });
       },
-      stuff: __spreadValues({}, stuff)
+      stuff: { ...stuff }
     };
     if (options.dev) {
       Object.defineProperty(load_input, "page", {
@@ -893,7 +850,7 @@ async function load_node({
       load_input.status = status;
       load_input.error = error2;
     }
-    loaded = await module2.load.call(null, load_input);
+    loaded = await module.load.call(null, load_input);
   } else {
     loaded = {};
   }
@@ -1013,14 +970,15 @@ async function respond$1(opts) {
         let loaded;
         if (node) {
           try {
-            loaded = await load_node(__spreadProps(__spreadValues({}, opts), {
+            loaded = await load_node({
+              ...opts,
               url: request.url,
               node,
               stuff,
               prerender_enabled: is_prerender_enabled(options, node, state),
               is_leaf: i === nodes.length - 1,
               is_error: false
-            }));
+            });
             if (!loaded)
               return;
             set_cookie_headers = set_cookie_headers.concat(loaded.set_cookie_headers);
@@ -1054,7 +1012,8 @@ async function respond$1(opts) {
                   j -= 1;
                 }
                 try {
-                  const error_loaded = await load_node(__spreadProps(__spreadValues({}, opts), {
+                  const error_loaded = await load_node({
+                    ...opts,
                     url: request.url,
                     node: error_node,
                     stuff: node_loaded.stuff,
@@ -1063,7 +1022,7 @@ async function respond$1(opts) {
                     is_error: true,
                     status,
                     error: error2
-                  }));
+                  });
                   if (error_loaded.loaded.error) {
                     continue;
                   }
@@ -1088,25 +1047,30 @@ async function respond$1(opts) {
           }
         }
         if (loaded && loaded.loaded.stuff) {
-          stuff = __spreadValues(__spreadValues({}, stuff), loaded.loaded.stuff);
+          stuff = {
+            ...stuff,
+            ...loaded.loaded.stuff
+          };
         }
       }
     }
   try {
-    return with_cookies(await render_response(__spreadProps(__spreadValues({}, opts), {
+    return with_cookies(await render_response({
+      ...opts,
       url: request.url,
       page_config,
       status,
       error: error2,
       branch: branch.filter(Boolean)
-    })), set_cookie_headers);
+    }), set_cookie_headers);
   } catch (err) {
     const error3 = coalesce_to_error(err);
     options.handle_error(error3, request);
-    return with_cookies(await respond_with_error(__spreadProps(__spreadValues({}, opts), {
+    return with_cookies(await respond_with_error({
+      ...opts,
       status: 500,
       error: error3
-    })), set_cookie_headers);
+    }), set_cookie_headers);
   }
 }
 function get_page_config(leaf, options) {
@@ -1295,12 +1259,13 @@ async function respond(incoming, options, state = {}) {
     }
   }
   const headers = lowercase_keys(incoming.headers);
-  const request = __spreadProps(__spreadValues({}, incoming), {
+  const request = {
+    ...incoming,
     headers,
     body: parse_body(incoming.rawBody, headers),
     params: {},
     locals: {}
-  });
+  };
   const print_error = (property, replacement) => {
     Object.defineProperty(request, property, {
       get: () => {
@@ -1337,7 +1302,7 @@ async function respond(incoming, options, state = {}) {
               const cache_control = get_single_valued_header(response.headers, "cache-control");
               if (!cache_control || !/(no-store|immutable)/.test(cache_control)) {
                 let if_none_match_value = request2.headers["if-none-match"];
-                if (if_none_match_value == null ? void 0 : if_none_match_value.startsWith('W/"')) {
+                if (if_none_match_value?.startsWith('W/"')) {
                   if_none_match_value = if_none_match_value.substring(2);
                 }
                 const etag = `"${hash(response.body || "")}"`;
@@ -1383,14 +1348,14 @@ const css = {
   code: "#svelte-announcer.svelte-1j55zn5{position:absolute;left:0;top:0;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;width:1px;height:1px}",
   map: null
 };
-const Root = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots) => {
+const Root = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { stores } = $$props;
   let { page } = $$props;
   let { components } = $$props;
   let { props_0 = null } = $$props;
   let { props_1 = null } = $$props;
   let { props_2 = null } = $$props;
-  (0, import_index_c8dcedc4.s)("__svelte__", stores);
+  setContext("__svelte__", stores);
   afterUpdate(stores.page.notify);
   if ($$props.stores === void 0 && $$bindings.stores && stores !== void 0)
     $$bindings.stores(stores);
@@ -1411,11 +1376,11 @@ const Root = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots)
   return `
 
 
-${components[1] ? `${(0, import_index_c8dcedc4.v)(components[0] || import_index_c8dcedc4.m, "svelte:component").$$render($$result, Object.assign(props_0 || {}), {}, {
-    default: () => `${components[2] ? `${(0, import_index_c8dcedc4.v)(components[1] || import_index_c8dcedc4.m, "svelte:component").$$render($$result, Object.assign(props_1 || {}), {}, {
-      default: () => `${(0, import_index_c8dcedc4.v)(components[2] || import_index_c8dcedc4.m, "svelte:component").$$render($$result, Object.assign(props_2 || {}), {}, {})}`
-    })}` : `${(0, import_index_c8dcedc4.v)(components[1] || import_index_c8dcedc4.m, "svelte:component").$$render($$result, Object.assign(props_1 || {}), {}, {})}`}`
-  })}` : `${(0, import_index_c8dcedc4.v)(components[0] || import_index_c8dcedc4.m, "svelte:component").$$render($$result, Object.assign(props_0 || {}), {}, {})}`}
+${components[1] ? `${validate_component(components[0] || missing_component, "svelte:component").$$render($$result, Object.assign(props_0 || {}), {}, {
+    default: () => `${components[2] ? `${validate_component(components[1] || missing_component, "svelte:component").$$render($$result, Object.assign(props_1 || {}), {}, {
+      default: () => `${validate_component(components[2] || missing_component, "svelte:component").$$render($$result, Object.assign(props_2 || {}), {}, {})}`
+    })}` : `${validate_component(components[1] || missing_component, "svelte:component").$$render($$result, Object.assign(props_1 || {}), {}, {})}`}`
+  })}` : `${validate_component(components[0] || missing_component, "svelte:component").$$render($$result, Object.assign(props_0 || {}), {}, {})}`}
 
 ${``}`;
 });
@@ -1497,6 +1462,7 @@ class App {
     }
     const host = request.headers["host"];
     const protocol = default_protocol;
-    return respond(__spreadProps(__spreadValues({}, request), { url: new URL(request.url, protocol + "://" + host) }), this.options, { prerender });
+    return respond({ ...request, url: new URL(request.url, protocol + "://" + host) }, this.options, { prerender });
   }
 }
+export { App, override };

@@ -1,50 +1,7 @@
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __defProps = Object.defineProperties;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
-var __export = (target, all) => {
-  __markAsModule(target);
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __reExport = (target, module2, desc) => {
-  if (module2 && typeof module2 === "object" || typeof module2 === "function") {
-    for (let key of __getOwnPropNames(module2))
-      if (!__hasOwnProp.call(target, key) && key !== "default")
-        __defProp(target, key, { get: () => module2[key], enumerable: !(desc = __getOwnPropDesc(module2, key)) || desc.enumerable });
-  }
-  return target;
-};
-var __toModule = (module2) => {
-  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
-};
-__export(exports, {
-  default: () => Routes
-});
-var import_index_c8dcedc4 = __toModule(require("../../chunks/index-c8dcedc4.js"));
-var import_app = __toModule(require("firebase/compat/app"));
-var import_auth = __toModule(require("firebase/compat/auth"));
-var import_firestore = __toModule(require("firebase/compat/firestore"));
+import { n as noop, a as safe_not_equal, b as subscribe, r as run_all, i as is_function, c as create_ssr_component, e as escape, d as add_attribute, f as null_to_empty, v as validate_component, g as each } from "../../chunks/index-c8dcedc4.js";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 var firebaseConfig = {
   apiKey: "AIzaSyBFiJP-PVV8jCljNq62nquoTVkl46Vsldw",
   authDomain: "todo-app123456.firebaseapp.com",
@@ -54,28 +11,28 @@ var firebaseConfig = {
   appId: "1:247179786644:web:e7bfd14c05ec40a918f781",
   measurementId: "G-MSVMZG1NXR"
 };
-import_app.default.initializeApp(firebaseConfig);
-import_app.default.auth();
-new import_app.default.auth.GoogleAuthProvider();
-import_app.default.getCurrentUser = () => {
+firebase.initializeApp(firebaseConfig);
+firebase.auth();
+new firebase.auth.GoogleAuthProvider();
+firebase.getCurrentUser = () => {
   return new Promise((resolve, reject) => {
-    import_app.default.auth().onAuthStateChanged((user2) => {
+    firebase.auth().onAuthStateChanged((user2) => {
       resolve(user2);
     }, reject);
   });
 };
-const db = import_app.default.firestore();
+const db = firebase.firestore();
 const subscriber_queue = [];
 function readable(value, start) {
   return {
     subscribe: writable(value, start).subscribe
   };
 }
-function writable(value, start = import_index_c8dcedc4.n) {
+function writable(value, start = noop) {
   let stop;
   const subscribers = new Set();
   function set(new_value) {
-    if ((0, import_index_c8dcedc4.a)(value, new_value)) {
+    if (safe_not_equal(value, new_value)) {
       value = new_value;
       if (stop) {
         const run_queue = !subscriber_queue.length;
@@ -95,11 +52,11 @@ function writable(value, start = import_index_c8dcedc4.n) {
   function update(fn) {
     set(fn(value));
   }
-  function subscribe2(run, invalidate = import_index_c8dcedc4.n) {
+  function subscribe2(run, invalidate = noop) {
     const subscriber = [run, invalidate];
     subscribers.add(subscriber);
     if (subscribers.size === 1) {
-      stop = start(set) || import_index_c8dcedc4.n;
+      stop = start(set) || noop;
     }
     run(value);
     return () => {
@@ -120,7 +77,7 @@ function derived(stores, fn, initial_value) {
     let inited = false;
     const values = [];
     let pending = 0;
-    let cleanup = import_index_c8dcedc4.n;
+    let cleanup = noop;
     const sync = () => {
       if (pending) {
         return;
@@ -130,10 +87,10 @@ function derived(stores, fn, initial_value) {
       if (auto) {
         set(result);
       } else {
-        cleanup = (0, import_index_c8dcedc4.i)(result) ? result : import_index_c8dcedc4.n;
+        cleanup = is_function(result) ? result : noop;
       }
     };
-    const unsubscribers = stores_array.map((store, i) => (0, import_index_c8dcedc4.b)(store, (value) => {
+    const unsubscribers = stores_array.map((store, i) => subscribe(store, (value) => {
       values[i] = value;
       pending &= ~(1 << i);
       if (inited) {
@@ -145,7 +102,7 @@ function derived(stores, fn, initial_value) {
     inited = true;
     sync();
     return function stop() {
-      (0, import_index_c8dcedc4.r)(unsubscribers);
+      run_all(unsubscribers);
       cleanup();
     };
   });
@@ -158,7 +115,7 @@ const createUser = () => {
       set(user2);
     },
     current: async () => {
-      const user2 = await import_app.default.getCurrentUser();
+      const user2 = await firebase.getCurrentUser();
       set(user2);
     }
   };
@@ -169,7 +126,7 @@ const css$5 = {
   code: "section.svelte-esy5mq{display:flex;flex-direction:column;align-items:center;height:100%;padding-bottom:15px}button.svelte-esy5mq{border:none;cursor:pointer;width:100%;background-color:rgb(123, 214, 169);border-radius:20px;color:black;height:35px}button.svelte-esy5mq,i.svelte-esy5mq{font-size:20pt}button.svelte-esy5mq:hover{background-color:rgb(21, 138, 128);color:white;border-radius:20px}",
   map: null
 };
-const Profile = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots) => {
+const Profile = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { displayName } = $$props;
   let { photoURL } = $$props;
   let { uid } = $$props;
@@ -180,9 +137,9 @@ const Profile = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slo
   if ($$props.uid === void 0 && $$bindings.uid && uid !== void 0)
     $$bindings.uid(uid);
   $$result.css.add(css$5);
-  return `<section class="${"svelte-esy5mq"}"><h3>Hola ${(0, import_index_c8dcedc4.e)(displayName)}!</h3>
-	<img${(0, import_index_c8dcedc4.d)("src", photoURL, 0)} width="${"100"}" alt="${"user avatar"}">
-	<p>Tu userID es ${(0, import_index_c8dcedc4.e)(uid)}</p>
+  return `<section class="${"svelte-esy5mq"}"><h3>Hola ${escape(displayName)}!</h3>
+	<img${add_attribute("src", photoURL, 0)} width="${"100"}" alt="${"user avatar"}">
+	<p>Tu userID es ${escape(uid)}</p>
 	<button class="${"svelte-esy5mq"}">Logout <i class="${"fas fa-sign-out-alt svelte-esy5mq"}"></i></button>
 </section>`;
 });
@@ -191,7 +148,7 @@ const css$4 = {
   code: "nav.svelte-1xxq0mq{position:fixed;left:0;right:0;top:0;margin:0px;padding:0px 10px;line-height:50px;width:100%;background-color:rgb(122, 158, 150);height:55px;display:flex;flex-direction:row;justify-content:space-between;align-items:center;z-index:2}strong.svelte-1xxq0mq{font-size:30pt;color:#fff;padding:0px;margin:0px;text-align:center}i.svelte-1xxq0mq{display:flex;flex-direction:column;justify-content:center;font-size:40px}.fa-times.svelte-1xxq0mq:hover{color:rgb(66, 109, 95)}img.svelte-1xxq0mq{border-radius:27px;height:100%;height:47px;cursor:pointer}img.svelte-1xxq0mq:hover{filter:brightness(0.5)}div.svelte-1xxq0mq{position:absolute;top:55px;padding:0px;background-color:rgb(85, 112, 106);width:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:1}.profile-div__hide.svelte-1xxq0mq{left:-1420px;transition:left 0.3s}.profile-div__show.svelte-1xxq0mq{left:0;transition:left 0.3s}",
   map: null
 };
-const Navbar = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots) => {
+const Navbar = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { iUser = null } = $$props;
   let name = "";
   let iURL = "";
@@ -205,8 +162,8 @@ const Navbar = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slot
     $$bindings.iUser(iUser);
   $$result.css.add(css$4);
   return `<nav class="${"svelte-1xxq0mq"}"><strong href="${"/"}" class="${"svelte-1xxq0mq"}">TodoApp</strong>
-	${iUser != null ? `${`<img${(0, import_index_c8dcedc4.d)("src", iUser.photoURL, 0)} alt="${"user"}" class="${"svelte-1xxq0mq"}">`}` : `<i class="${"fas fa-user-circle svelte-1xxq0mq"}"></i>`}
-	<div class="${(0, import_index_c8dcedc4.e)((0, import_index_c8dcedc4.f)("profile-div__hide")) + " svelte-1xxq0mq"}">${(0, import_index_c8dcedc4.v)(Profile, "Profile").$$render($$result, {
+	${iUser != null ? `${`<img${add_attribute("src", iUser.photoURL, 0)} alt="${"user"}" class="${"svelte-1xxq0mq"}">`}` : `<i class="${"fas fa-user-circle svelte-1xxq0mq"}"></i>`}
+	<div class="${escape(null_to_empty("profile-div__hide")) + " svelte-1xxq0mq"}">${validate_component(Profile, "Profile").$$render($$result, {
     displayName: name,
     photoURL: iURL,
     uid: uID
@@ -254,9 +211,9 @@ const css$3 = {
   code: ".notifications.svelte-hn7zr7{position:fixed;bottom:30px;right:10px;margin:0 auto;padding:0;z-index:9999;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;pointer-events:none}.toast.svelte-hn7zr7{flex:0 0 auto;text-align:center;margin-bottom:10px;width:170px}.content.svelte-hn7zr7{padding:10px;display:block;color:white;font-size:16pt;font-weight:500}",
   map: null
 };
-const Toast = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots) => {
+const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $notifications, $$unsubscribe_notifications;
-  $$unsubscribe_notifications = (0, import_index_c8dcedc4.b)(notifications, (value) => $notifications = value);
+  $$unsubscribe_notifications = subscribe(notifications, (value) => $notifications = value);
   let { themes = {
     danger: "#E26D69",
     success: "#84C991",
@@ -268,8 +225,8 @@ const Toast = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots
     $$bindings.themes(themes);
   $$result.css.add(css$3);
   $$unsubscribe_notifications();
-  return `<div class="${"notifications svelte-hn7zr7"}">${(0, import_index_c8dcedc4.g)($notifications, (notification) => `<div class="${"toast svelte-hn7zr7"}" style="${"background: " + (0, import_index_c8dcedc4.e)(themes[notification.type]) + ";"}"><div class="${"content svelte-hn7zr7"}">${(0, import_index_c8dcedc4.e)(notification.message)}</div>
-			${notification.icon ? `<i class="${(0, import_index_c8dcedc4.e)((0, import_index_c8dcedc4.f)(notification.icon)) + " svelte-hn7zr7"}"></i>` : ``}
+  return `<div class="${"notifications svelte-hn7zr7"}">${each($notifications, (notification) => `<div class="${"toast svelte-hn7zr7"}" style="${"background: " + escape(themes[notification.type]) + ";"}"><div class="${"content svelte-hn7zr7"}">${escape(notification.message)}</div>
+			${notification.icon ? `<i class="${escape(null_to_empty(notification.icon)) + " svelte-hn7zr7"}"></i>` : ``}
 		</div>`)}
 </div>`;
 });
@@ -278,31 +235,31 @@ const css$2 = {
   code: "main.svelte-1wpjchw{width:100%;height:100%}.content-p.svelte-1wpjchw{word-break:break-all}.fa-paper-plane.svelte-1wpjchw{padding:0px;margin:0px;font-size:20px}.fa-check-square.svelte-1wpjchw,.fa-square.svelte-1wpjchw{font-size:30px;color:rgb(112, 214, 172)}.div-form.svelte-1wpjchw{margin-top:58px;padding:10px;display:flex;flex-direction:row;align-items:center;justify-content:center;transition:top 1s;z-index:1;height:60%}.input-todo.svelte-1wpjchw{border-radius:35px;padding:40px;margin:0px;width:100%;height:100%;color:#fff}.btn-floating.svelte-1wpjchw{margin-left:10px;display:flex;justify-content:center;align-items:center;background-color:rgb(124, 192, 152);width:50px;height:45px}.Todos-div.svelte-1wpjchw{margin-top:10px}",
   map: null
 };
-const Todo = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots) => {
+const Todo = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { uid } = $$props;
   let text = "";
   let tasks = [];
   db.collection("todos").where("uid", "==", uid).orderBy("created").onSnapshot((querySnapshot) => {
     let docs = [];
     querySnapshot.forEach((doc) => {
-      docs.push(__spreadProps(__spreadValues({}, doc.data()), { id: doc.id }));
+      docs.push({ ...doc.data(), id: doc.id });
     });
     tasks = [...docs];
   });
   if ($$props.uid === void 0 && $$bindings.uid && uid !== void 0)
     $$bindings.uid(uid);
   $$result.css.add(css$2);
-  return `<main class="${"svelte-1wpjchw"}"><div class="${"div-form svelte-1wpjchw"}"><input class="${"input-todo svelte-1wpjchw"}" type="${"text"}" placeholder="${"Nueva Tarea"}" style="${"border: solid 1.5px rgb(124, 192, 152); margin: 0px;border-radius: 15px; padding: 10px;width: 100%; height: 100%;color: #fff;"}"${(0, import_index_c8dcedc4.d)("value", text, 0)}>
+  return `<main class="${"svelte-1wpjchw"}"><div class="${"div-form svelte-1wpjchw"}"><input class="${"input-todo svelte-1wpjchw"}" type="${"text"}" placeholder="${"Nueva Tarea"}" style="${"border: solid 1.5px rgb(124, 192, 152); margin: 0px;border-radius: 15px; padding: 10px;width: 100%; height: 100%;color: #fff;"}"${add_attribute("value", text, 0)}>
 		<button class="${"btn-floating btn-large waves-effect waves-light svelte-1wpjchw"}" type="${"submit"}" name="${"action"}"><i class="${"fas fa-paper-plane svelte-1wpjchw"}"></i></button></div>
 
-	<div class="${"Todos-div row svelte-1wpjchw"}">${(0, import_index_c8dcedc4.g)(tasks, (todo) => `<div${(0, import_index_c8dcedc4.d)("class", todo.complete == false ? "col s12 m6 l3 animate__animated animate__zoomInUp animate__slows" : "col s12 m6 l3 animate__animated animate__zoomOut animate__slower", 0)}><div class="${"card horizontal"}"><div class="${"card-stacked"}"><div class="${"card-content"}"><p class="${"content-p svelte-1wpjchw"}">${(0, import_index_c8dcedc4.e)(todo.text)}</p></div>
-						<div class="${"card-action center-align"}"><p><i class="${(0, import_index_c8dcedc4.e)((0, import_index_c8dcedc4.f)(todo.complete == false ? "far fa-square" : "far fa-check-square")) + " svelte-1wpjchw"}"></i>
+	<div class="${"Todos-div row svelte-1wpjchw"}">${each(tasks, (todo) => `<div${add_attribute("class", todo.complete == false ? "col s12 m6 l3 animate__animated animate__zoomInUp animate__slows" : "col s12 m6 l3 animate__animated animate__zoomOut animate__slower", 0)}><div class="${"card horizontal"}"><div class="${"card-stacked"}"><div class="${"card-content"}"><p class="${"content-p svelte-1wpjchw"}">${escape(todo.text)}</p></div>
+						<div class="${"card-action center-align"}"><p><i class="${escape(null_to_empty(todo.complete == false ? "far fa-square" : "far fa-check-square")) + " svelte-1wpjchw"}"></i>
 								<span>Hecho</span>
 							</p></div>
 					</div></div>
 			</div>`)}</div>
 
-	${(0, import_index_c8dcedc4.v)(Toast, "Toast").$$render($$result, {}, {}, {})}
+	${validate_component(Toast, "Toast").$$render($$result, {}, {}, {})}
 </main>`;
 });
 var loaderPage_svelte_svelte_type_style_lang = "";
@@ -310,7 +267,7 @@ const css$1 = {
   code: ".center.svelte-1bmr9af{display:flex;text-align:center;justify-content:center;align-items:center;min-height:100vh}.ring.svelte-1bmr9af{position:absolute;width:200px;height:200px;border-radius:50%;animation:svelte-1bmr9af-ring 2s linear infinite}@keyframes svelte-1bmr9af-ring{0%{transform:rotate(0deg);box-shadow:1px 5px 2px #e65c00}50%{transform:rotate(180deg);box-shadow:1px 5px 2px #18b201}100%{transform:rotate(360deg);box-shadow:1px 5px 2px #0456c8}}.ring.svelte-1bmr9af:before{position:absolute;content:'';left:0;top:0;height:100%;width:100%;border-radius:50%;box-shadow:0 0 5px rgba(255,255,255,.3)}span.svelte-1bmr9af{color:#737373;font-size:20px;text-transform:uppercase;letter-spacing:1px;line-height:200px;animation:svelte-1bmr9af-text 3s ease-in-out infinite}@keyframes svelte-1bmr9af-text{50%{color:black}}",
   map: null
 };
-const LoaderPage = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots) => {
+const LoaderPage = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$result.css.add(css$1);
   return `
 <div class="${"center svelte-1bmr9af"}"><div class="${"ring svelte-1bmr9af"}"></div>
@@ -321,15 +278,16 @@ const css = {
   code: "main.svelte-1acf5qf{width:100%;height:100%}div.svelte-1acf5qf{width:100%;display:flex;justify-content:center}button.svelte-1acf5qf{border:none;margin-top:100px;cursor:pointer;width:70%;background-color:rgb(123, 214, 169);border-radius:20px;color:black;height:40px;font-size:20pt}button.svelte-1acf5qf:hover{background-color:rgb(21, 138, 128);color:white;border-radius:20px}@media only screen and (max-width: 430px){button.svelte-1acf5qf{width:90%;font-size:20pt}}@media only screen and (max-width: 336px){button.svelte-1acf5qf{width:90%;font-size:15pt}}",
   map: null
 };
-const Routes = (0, import_index_c8dcedc4.c)(($$result, $$props, $$bindings, slots) => {
+const Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $user, $$unsubscribe_user;
-  $$unsubscribe_user = (0, import_index_c8dcedc4.b)(user, (value) => $user = value);
+  $$unsubscribe_user = subscribe(user, (value) => $user = value);
   $$result.css.add(css);
   $$unsubscribe_user();
-  return `<main class="${"svelte-1acf5qf"}"><section>${$user === false ? `${(0, import_index_c8dcedc4.v)(LoaderPage, "LoaderPage").$$render($$result, {}, {}, {})}` : `${$user === null ? `${(0, import_index_c8dcedc4.v)(Navbar, "Navbar").$$render($$result, {}, {}, {})}
+  return `<main class="${"svelte-1acf5qf"}"><section>${$user === false ? `${validate_component(LoaderPage, "LoaderPage").$$render($$result, {}, {}, {})}` : `${$user === null ? `${validate_component(Navbar, "Navbar").$$render($$result, {}, {}, {})}
 			<div class="${"svelte-1acf5qf"}"><button class="${"center-align svelte-1acf5qf"}"><i class="${"fab fa-google"}"></i> Signin with Google
 				</button></div>` : `
-			${(0, import_index_c8dcedc4.v)(Navbar, "Navbar").$$render($$result, { iUser: $user }, {}, {})}
-			${(0, import_index_c8dcedc4.v)(Todo, "Todos").$$render($$result, { uid: $user.uid }, {}, {})}`}`}</section>
+			${validate_component(Navbar, "Navbar").$$render($$result, { iUser: $user }, {}, {})}
+			${validate_component(Todo, "Todos").$$render($$result, { uid: $user.uid }, {}, {})}`}`}</section>
 </main>`;
 });
+export { Routes as default };
